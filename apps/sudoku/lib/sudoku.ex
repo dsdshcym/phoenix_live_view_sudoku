@@ -52,9 +52,6 @@ defmodule Sudoku do
   end
 
   def solve(input, pid) do
-    send(pid, {"update", input})
-    Process.sleep(1000)
-
     case for i <- 0..8, j <- 0..8, pos = {i, j}, !Map.has_key?(input, pos), do: pos do
       [] ->
         input
@@ -66,7 +63,14 @@ defmodule Sudoku do
           |> Enum.sort_by(fn {_pos, posibilities} -> length(posibilities) end)
 
         posibilities
-        |> Stream.map(&solve(Map.put(input, least_posible_position, &1), pid))
+        |> Stream.map(fn posibility ->
+          new_soduku = Map.put(input, least_posible_position, posibility)
+
+          send(pid, {"update", new_soduku, least_posible_position})
+          Process.sleep(1000)
+
+          solve(new_soduku, pid)
+        end)
         |> Stream.reject(fn result -> result == :error end)
         |> Stream.take(1)
         |> Enum.to_list()

@@ -9,6 +9,7 @@ defmodule SudokuWeb.DemoLive do
         <div>
           <%= for j <- 0..8 do %>
             <input maxlength="1" size="1" name="input[<%= i %>][<%= j %>]" value="<%= Map.get(@sudoku, {i, j}, 0) %>"
+              class="<%= if {i, j} == @highlight_pos, do: "highlight" %>"
               <%= if @solving, do: "disabled" %>/>
           <% end %>
         </div>
@@ -37,7 +38,7 @@ defmodule SudokuWeb.DemoLive do
 
     {:ok, server} = Sudoku.start_link(self())
 
-    {:ok, assign(socket, sudoku: sudoku, server: server, solving: false)}
+    {:ok, assign(socket, sudoku: sudoku, server: server, solving: false, highlight_pos: nil)}
   end
 
   def handle_event("start_solving", _value, socket) do
@@ -48,7 +49,7 @@ defmodule SudokuWeb.DemoLive do
     {:noreply, assign(socket, solving: true)}
   end
 
-  def handle_info({"update", new_sudoku}, socket) do
-    {:noreply, assign(socket, sudoku: new_sudoku)}
+  def handle_info({"update", new_sudoku, pos}, socket) do
+    {:noreply, assign(socket, sudoku: new_sudoku, highlight_pos: pos)}
   end
 end

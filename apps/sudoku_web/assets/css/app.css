@@ -14,3 +14,7 @@ input:disabled {
   font-weight: bold;
   color: black;
 }
+
+input.highlight {
+  background: yellow;
+}
