@@ -8,7 +8,8 @@ defmodule SudokuWeb.DemoLive do
       <%= for i <- 0..8 do %>
         <div>
           <%= for j <- 0..8 do %>
-            <input maxlength="1" size="1" name="input[<%= i %>][<%= j %>]" value="<%= Map.get(@sudoku, {i, j}, 0) %>"/>
+            <input maxlength="1" size="1" name="input[<%= i %>][<%= j %>]" value="<%= Map.get(@sudoku, {i, j}, 0) %>"
+              <%= if @solving, do: "disabled" %>/>
           <% end %>
         </div>
       <% end %>
@@ -36,7 +37,7 @@ defmodule SudokuWeb.DemoLive do
 
     {:ok, server} = Sudoku.start_link(self())
 
-    {:ok, assign(socket, sudoku: sudoku, server: server)}
+    {:ok, assign(socket, sudoku: sudoku, server: server, solving: false)}
   end
 
   def handle_event("start_solving", _value, socket) do
@@ -44,7 +45,7 @@ defmodule SudokuWeb.DemoLive do
 
     Sudoku.start_solving(socket.assigns.server, sudoku)
 
-    {:noreply, socket}
+    {:noreply, assign(socket, solving: true)}
   end
 
   def handle_info({"update", new_sudoku}, socket) do
