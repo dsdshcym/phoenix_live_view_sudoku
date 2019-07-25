@@ -3,19 +3,19 @@ defmodule SudokuWeb.DemoLive do
 
   def render(assigns) do
     ~L"""
-    <div class="sudoku">
-    <%= for i <- 0..8 do %>
-      <div>
-        <%= for j <- 0..8 do %>
-          <%= Map.get(@sudoku, {i, j}, 0) %>
-        <% end %>
+    <form phx-submit="start_solving">
+      <div class="sudoku">
+      <%= for i <- 0..8 do %>
+        <div>
+          <%= for j <- 0..8 do %>
+            <input maxlength="1" size="1" name="input[<%= i %>][<%= j %>]" value="<%= Map.get(@sudoku, {i, j}, 0) %>"/>
+          <% end %>
+        </div>
+      <% end %>
       </div>
-    <% end %>
-    </div>
 
-    <div>
-    <button phx-click="start_solving">Start</button>
-    </div>
+      <button>Start</button>
+    </form>
     """
   end
 
