@@ -1,4 +1,26 @@
 defmodule Sudoku do
+  use GenServer
+
+  def start_link(pid) do
+    GenServer.start_link(__MODULE__, pid)
+  end
+
+  def start_solving(server, sudoku) do
+    GenServer.cast(server, {:start_solving, sudoku})
+  end
+
+  @impl true
+  def init(pid) do
+    {:ok, %{live_pid: pid}}
+  end
+
+  @impl true
+  def handle_cast({:start_solving, sudoku}, %{live_pid: pid}) do
+    solve(sudoku, pid)
+
+    {:noreply, %{live_pid: pid}}
+  end
+
   def solve(input) when is_list(input) do
     input
     |> Sudoku.to_map()
@@ -30,6 +52,9 @@ defmodule Sudoku do
   end
 
   def solve(input, pid) do
+    send(pid, {"update", to_list(input)})
+    Process.sleep(1000)
+
     case for i <- 0..8, j <- 0..8, pos = {i, j}, !Map.has_key?(input, pos), do: pos do
       [] ->
         input

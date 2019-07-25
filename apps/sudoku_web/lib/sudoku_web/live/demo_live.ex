@@ -30,13 +30,17 @@ defmodule SudokuWeb.DemoLive do
       [0, 4, 9, 6, 7, 5, 3, 1, 0]
     ]
 
-    {:ok, assign(socket, sudoku: sudoku)}
+    {:ok, server} = Sudoku.start_link(self())
+
+    {:ok, assign(socket, sudoku: sudoku, server: server)}
   end
 
   def handle_event("start_solving", _value, socket) do
-    socket.assigns.sudoku
-    |> Sudoku.to_map()
-    |> Sudoku.solve(self())
+    sudoku =
+      socket.assigns.sudoku
+      |> Sudoku.to_map()
+
+    Sudoku.start_solving(socket.assigns.server, sudoku)
 
     {:noreply, socket}
   end
