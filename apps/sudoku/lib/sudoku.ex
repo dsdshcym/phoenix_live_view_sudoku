@@ -52,7 +52,7 @@ defmodule Sudoku do
   end
 
   def solve(input, pid) do
-    send(pid, {"update", to_list(input)})
+    send(pid, {"update", input})
     Process.sleep(1000)
 
     case for i <- 0..8, j <- 0..8, pos = {i, j}, !Map.has_key?(input, pos), do: pos do

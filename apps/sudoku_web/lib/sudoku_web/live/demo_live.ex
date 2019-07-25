@@ -3,10 +3,12 @@ defmodule SudokuWeb.DemoLive do
 
   def render(assigns) do
     ~L"""
-    <div>
-    <%= for row <- @sudoku do %>
+    <div class="sudoku">
+    <%= for i <- 0..8 do %>
       <div>
-        <%= inspect(row) %>
+        <%= for j <- 0..8 do %>
+          <%= Map.get(@sudoku, {i, j}, 0) %>
+        <% end %>
       </div>
     <% end %>
     </div>
@@ -18,17 +20,19 @@ defmodule SudokuWeb.DemoLive do
   end
 
   def mount(_session, socket) do
-    sudoku = [
-      [2, 8, 3, 1, 0, 0, 0, 0, 7],
-      [7, 0, 0, 0, 0, 0, 0, 4, 0],
-      [4, 0, 0, 0, 0, 0, 2, 0, 3],
-      [6, 3, 0, 2, 0, 0, 7, 0, 0],
-      [0, 5, 0, 0, 6, 3, 4, 0, 9],
-      [0, 0, 7, 5, 0, 4, 0, 3, 8],
-      [3, 1, 0, 0, 2, 0, 8, 7, 5],
-      [5, 7, 0, 0, 0, 1, 9, 0, 4],
-      [0, 4, 9, 6, 7, 5, 3, 1, 0]
-    ]
+    sudoku =
+      [
+        [2, 8, 3, 1, 0, 0, 0, 0, 7],
+        [7, 0, 0, 0, 0, 0, 0, 4, 0],
+        [4, 0, 0, 0, 0, 0, 2, 0, 3],
+        [6, 3, 0, 2, 0, 0, 7, 0, 0],
+        [0, 5, 0, 0, 6, 3, 4, 0, 9],
+        [0, 0, 7, 5, 0, 4, 0, 3, 8],
+        [3, 1, 0, 0, 2, 0, 8, 7, 5],
+        [5, 7, 0, 0, 0, 1, 9, 0, 4],
+        [0, 4, 9, 6, 7, 5, 3, 1, 0]
+      ]
+      |> Sudoku.to_map()
 
     {:ok, server} = Sudoku.start_link(self())
 
@@ -36,9 +40,7 @@ defmodule SudokuWeb.DemoLive do
   end
 
   def handle_event("start_solving", _value, socket) do
-    sudoku =
-      socket.assigns.sudoku
-      |> Sudoku.to_map()
+    sudoku = socket.assigns.sudoku
 
     Sudoku.start_solving(socket.assigns.server, sudoku)
 
