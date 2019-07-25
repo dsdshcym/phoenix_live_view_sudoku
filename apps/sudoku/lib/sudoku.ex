@@ -58,7 +58,7 @@ defmodule Sudoku do
   def to_list(map) do
     for i <- 0..8 do
       for j <- 0..8 do
-        map[{i, j}]
+        Map.get(map, {i, j}, 0)
       end
     end
   end
