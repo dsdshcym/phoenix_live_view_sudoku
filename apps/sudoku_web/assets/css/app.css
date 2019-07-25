@@ -2,3 +2,15 @@
 
 @import "./phoenix.css";
 @import "../../../../deps/phoenix_live_view/assets/css/live_view.css";
+
+input {
+  font-size: inherit;
+  text-align: center;
+  width: 5em;
+  height: 5em;
+}
+
+input:disabled {
+  font-weight: bold;
+  color: black;
+}
