@@ -8,7 +8,7 @@ defmodule SudokuWeb.DemoLive do
       <%= for i <- 0..8 do %>
         <div>
           <%= for j <- 0..8 do %>
-            <input maxlength="1" size="1" name="input[<%= i %>][<%= j %>]" value="<%= Map.get(@sudoku, {i, j}, 0) %>"
+            <input maxlength="1" size="1" name="input[<%= i %>][<%= j %>]" value="<%= Map.get(@sudoku, {i, j}) %>"
               class="<%= if {i, j} == @highlight_pos, do: "highlight" %>"
               <%= if @solving, do: "disabled" %>/>
           <% end %>
@@ -33,10 +33,10 @@ defmodule SudokuWeb.DemoLive do
     sudoku =
       for {row_str, num_strs_by_col_str} <- input,
           {col_str, num_str} <- num_strs_by_col_str,
+          num_str != "",
           row = String.to_integer(row_str),
           col = String.to_integer(col_str),
           num = String.to_integer(num_str),
-          num != 0,
           into: %{} do
         {{row, col}, num}
       end
