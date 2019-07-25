@@ -56,6 +56,7 @@ config :sudoku_web, SudokuWeb.Endpoint,
       ~r{priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$},
       ~r{priv/gettext/.*(po)$},
       ~r{lib/sudoku_web/views/.*(ex)$},
+      ~r{lib/sudoku_web/live/.*(ex)$},
       ~r{lib/sudoku_web/templates/.*(eex)$}
     ]
   ]

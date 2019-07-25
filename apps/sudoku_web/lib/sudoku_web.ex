@@ -22,6 +22,7 @@ defmodule SudokuWeb do
       use Phoenix.Controller, namespace: SudokuWeb
       import Plug.Conn
       import SudokuWeb.Gettext
+      import Phoenix.LiveView.Controller, only: [live_render: 3]
       alias SudokuWeb.Router.Helpers, as: Routes
     end
   end
@@ -40,6 +41,7 @@ defmodule SudokuWeb do
 
       import SudokuWeb.ErrorHelpers
       import SudokuWeb.Gettext
+      import Phoenix.LiveView, only: [live_render: 2, live_render: 3, live_link: 1, live_link: 2]
       alias SudokuWeb.Router.Helpers, as: Routes
     end
   end
@@ -49,6 +51,7 @@ defmodule SudokuWeb do
       use Phoenix.Router
       import Plug.Conn
       import Phoenix.Controller
+      import Phoenix.LiveView.Router
     end
   end
 

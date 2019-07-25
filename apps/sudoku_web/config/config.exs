@@ -10,6 +10,9 @@ config :sudoku_web,
 
 # Configures the endpoint
 config :sudoku_web, SudokuWeb.Endpoint,
+  live_view: [
+    signing_salt: "8L/BmHcdHTd47Xs3VOYFyV3EqroWiXP1"
+  ],
   url: [host: "localhost"],
   secret_key_base: "O4X3Pf6a3DfZYmrNTObEV/MatKBHOC0PsqtCxPOwOR4HqamUXx+sL5ujC/qNenOl",
   render_errors: [view: SudokuWeb.ErrorView, accepts: ~w(html json)],
