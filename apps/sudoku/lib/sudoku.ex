@@ -29,6 +29,29 @@ defmodule Sudoku do
     end
   end
 
+  def solve(input, pid) do
+    case for i <- 0..8, j <- 0..8, pos = {i, j}, !Map.has_key?(input, pos), do: pos do
+      [] ->
+        input
+
+      empty_positions ->
+        [{least_posible_position, posibilities} | _] =
+          empty_positions
+          |> Enum.map(&{&1, all_posibilities(input, &1)})
+          |> Enum.sort_by(fn {_pos, posibilities} -> length(posibilities) end)
+
+        posibilities
+        |> Stream.map(&solve(Map.put(input, least_posible_position, &1), pid))
+        |> Stream.reject(fn result -> result == :error end)
+        |> Stream.take(1)
+        |> Enum.to_list()
+        |> case do
+          [] -> :error
+          [result] -> result
+        end
+    end
+  end
+
   def all_posibilities(map, {i, j}) do
     same_row = for jj <- 0..8, do: Map.get(map, {i, jj})
     same_column = for ii <- 0..8, do: Map.get(map, {ii, j})
