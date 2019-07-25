@@ -22,27 +22,24 @@ defmodule SudokuWeb.DemoLive do
   end
 
   def mount(_session, socket) do
-    sudoku =
-      [
-        [2, 8, 3, 1, 0, 0, 0, 0, 7],
-        [7, 0, 0, 0, 0, 0, 0, 4, 0],
-        [4, 0, 0, 0, 0, 0, 2, 0, 3],
-        [6, 3, 0, 2, 0, 0, 7, 0, 0],
-        [0, 5, 0, 0, 6, 3, 4, 0, 9],
-        [0, 0, 7, 5, 0, 4, 0, 3, 8],
-        [3, 1, 0, 0, 2, 0, 8, 7, 5],
-        [5, 7, 0, 0, 0, 1, 9, 0, 4],
-        [0, 4, 9, 6, 7, 5, 3, 1, 0]
-      ]
-      |> Sudoku.to_map()
+    sudoku = %{}
 
     {:ok, server} = Sudoku.start_link(self())
 
     {:ok, assign(socket, sudoku: sudoku, server: server, solving: false, highlight_pos: nil)}
   end
 
-  def handle_event("start_solving", _value, socket) do
-    sudoku = socket.assigns.sudoku
+  def handle_event("start_solving", %{"input" => input}, socket) do
+    sudoku =
+      for {row_str, num_strs_by_col_str} <- input,
+          {col_str, num_str} <- num_strs_by_col_str,
+          row = String.to_integer(row_str),
+          col = String.to_integer(col_str),
+          num = String.to_integer(num_str),
+          num != 0,
+          into: %{} do
+        {{row, col}, num}
+      end
 
     Sudoku.start_solving(socket.assigns.server, sudoku)
 
