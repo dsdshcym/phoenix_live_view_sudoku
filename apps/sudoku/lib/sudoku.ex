@@ -14,13 +14,6 @@ defmodule Sudoku do
     {:ok, %{live_pid: pid}}
   end
 
-  @impl true
-  def handle_cast({:start_solving, sudoku}, %{live_pid: pid}) do
-    solve(sudoku, pid)
-
-    {:noreply, %{live_pid: pid}}
-  end
-
   def solve(input) when is_list(input) do
     input
     |> Sudoku.to_map()
@@ -48,6 +41,36 @@ defmodule Sudoku do
           [] -> :error
           [result] -> result
         end
+    end
+  end
+
+  def handle_cast({:start_solving, sudoku}, status) do
+    send(self(), :next)
+
+    {:noreply, Map.put(status, :stack, [{nil, sudoku}])}
+  end
+
+  def handle_info(:next, %{live_pid: pid, stack: [{pos, input} | rest]} = status) do
+    send(pid, {"update", input, pos})
+    Process.send_after(self(), :next, 1000)
+
+    case for i <- 0..8, j <- 0..8, pos = {i, j}, !Map.has_key?(input, pos), do: pos do
+      [] ->
+        input
+        {:noreply, status}
+
+      empty_positions ->
+        [{least_posible_position, posibilities} | _] =
+          empty_positions
+          |> Enum.map(&{&1, all_posibilities(input, &1)})
+          |> Enum.sort_by(fn {_pos, posibilities} -> length(posibilities) end)
+
+        new_stack =
+          posibilities
+          |> Enum.map(&Map.put(input, least_posible_position, &1))
+          |> Enum.reduce(rest, &[{least_posible_position, &1} | &2])
+
+        {:noreply, %{status | stack: new_stack}}
     end
   end
 
