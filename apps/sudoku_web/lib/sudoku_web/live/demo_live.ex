@@ -3,7 +3,7 @@ defmodule SudokuWeb.DemoLive do
 
   def render(assigns) do
     ~L"""
-    <form phx-submit="start_solving">
+    <form phx-change="update_interval" phx-submit="start_solving">
       <div class="sudoku">
       <%= for i <- 0..8 do %>
         <div>
@@ -17,6 +17,9 @@ defmodule SudokuWeb.DemoLive do
       </div>
 
       <button>Start</button>
+
+      <input type="range" min="100" max="5000" step="100" name="interval" value="<%= @interval %>"/>
+      <%= @interval %>ms
     </form>
     """
   end
@@ -26,7 +29,14 @@ defmodule SudokuWeb.DemoLive do
 
     {:ok, server} = Sudoku.start_link(self())
 
-    {:ok, assign(socket, sudoku: sudoku, server: server, solving: false, highlight_pos: nil)}
+    {:ok,
+     assign(socket,
+       sudoku: sudoku,
+       server: server,
+       solving: false,
+       highlight_pos: nil,
+       interval: 1000
+     )}
   end
 
   def handle_event("start_solving", %{"input" => input}, socket) do
@@ -44,6 +54,12 @@ defmodule SudokuWeb.DemoLive do
     Sudoku.start_solving(socket.assigns.server, sudoku)
 
     {:noreply, assign(socket, solving: true)}
+  end
+
+  def handle_event("update_interval", %{"interval" => interval} = value, socket) do
+    Sudoku.adjust_interval(socket.assigns.server, String.to_integer(interval))
+
+    {:noreply, assign(socket, interval: String.to_integer(interval))}
   end
 
   def handle_info({"update", new_sudoku, pos}, socket) do

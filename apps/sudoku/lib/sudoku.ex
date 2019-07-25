@@ -9,9 +9,13 @@ defmodule Sudoku do
     GenServer.cast(server, {:start_solving, sudoku})
   end
 
+  def adjust_interval(server, interval) do
+    GenServer.cast(server, {:adjust_interval, interval})
+  end
+
   @impl true
   def init(pid) do
-    {:ok, %{live_pid: pid}}
+    {:ok, %{live_pid: pid, interval: 1000}}
   end
 
   def solve(input) when is_list(input) do
@@ -44,6 +48,10 @@ defmodule Sudoku do
     end
   end
 
+  def handle_cast({:adjust_interval, interval}, status) do
+    {:noreply, %{status | interval: interval}}
+  end
+
   def handle_cast({:start_solving, sudoku}, status) do
     send(self(), :next)
 
@@ -52,7 +60,7 @@ defmodule Sudoku do
 
   def handle_info(:next, %{live_pid: pid, stack: [{pos, input} | rest]} = status) do
     send(pid, {"update", input, pos})
-    Process.send_after(self(), :next, 1000)
+    Process.send_after(self(), :next, status.interval)
 
     case for i <- 0..8, j <- 0..8, pos = {i, j}, !Map.has_key?(input, pos), do: pos do
       [] ->
