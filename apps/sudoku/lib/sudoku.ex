@@ -114,10 +114,12 @@ defmodule Sudoku do
           jj <- (block_j * 3)..(block_j * 3 + 2),
           do: Map.get(map, {ii, jj})
 
-    Enum.to_list(1..9) --
-      ((same_row ++ same_column ++ same_block)
-       |> Enum.uniq()
-       |> Enum.reject(&(&1 == nil)))
+    Enum.shuffle(
+      Enum.to_list(1..9) --
+        ((same_row ++ same_column ++ same_block)
+         |> Enum.uniq()
+         |> Enum.reject(&(&1 == nil)))
+    )
   end
 
   def to_map(list) do
