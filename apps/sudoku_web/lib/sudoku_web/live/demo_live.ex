@@ -55,7 +55,7 @@ defmodule SudokuWeb.DemoLive do
 
     Process.send_after(self(), :update, socket.assigns.interval)
 
-    {:noreply, assign(socket, solving: true)}
+    {:noreply, assign(socket, sudoku: sudoku, solving: true)}
   end
 
   def handle_event("update_interval", %{"interval" => interval} = value, socket) do
