@@ -53,13 +53,21 @@ defmodule SudokuWeb.DemoLive do
 
     Sudoku.start_solving(socket.assigns.server, sudoku)
 
+    Process.send_after(self(), :update, socket.assigns.interval)
+
     {:noreply, assign(socket, solving: true)}
   end
 
   def handle_event("update_interval", %{"interval" => interval} = value, socket) do
-    Sudoku.adjust_interval(socket.assigns.server, String.to_integer(interval))
-
     {:noreply, assign(socket, interval: String.to_integer(interval))}
+  end
+
+  def handle_info(:update, socket) do
+    {new_sudoku, pos} = Sudoku.next(socket.assigns.server)
+
+    Process.send_after(self(), :update, socket.assigns.interval)
+
+    {:noreply, assign(socket, sudoku: new_sudoku, highlight_pos: pos)}
   end
 
   def handle_info({"update", new_sudoku, pos}, socket) do
