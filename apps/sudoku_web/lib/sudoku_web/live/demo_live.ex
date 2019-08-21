@@ -4,16 +4,25 @@ defmodule SudokuWeb.DemoLive do
   def render(assigns) do
     ~L"""
     <form phx-change="update_interval" phx-submit="start_solving">
+
       <div class="sudoku">
-      <%= for i <- 0..8 do %>
-        <div>
-          <%= for j <- 0..8 do %>
-            <input maxlength="1" size="1" name="input[<%= i %>][<%= j %>]" value="<%= Map.get(@sudoku, {i, j}) %>"
-              class="<%= if {i, j} == @highlight_pos, do: "highlight" %>"
-              <%= if @solving, do: "disabled" %>/>
-          <% end %>
-        </div>
-      <% end %>
+        <table class="table_sudoku">
+          <tbody>
+              <%= for i <- 0..8 do %>
+                <tr class="sudoku_row">
+                  <%= for j <- 0..8 do %>
+                    <td class="sudoku_cell">
+                      <div class="content">
+                      <input maxlength="1" size="1" name="input[<%= i %>][<%= j %>]" value="<%= Map.get(@sudoku, {i, j}) %>"
+                        class="number <%= if {i, j} == @highlight_pos, do: "highlight" %>"
+                        <%= if @solving, do: "disabled" %>/>
+                      </div>
+                    </td>
+                  <% end %>
+                </tr>
+              <% end %>
+          </tbody>
+        </table>
       </div>
 
       <button>Start</button>

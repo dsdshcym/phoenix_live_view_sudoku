@@ -3,16 +3,35 @@
 @import "./phoenix.css";
 @import "../../../../deps/phoenix_live_view/assets/css/live_view.css";
 
-input {
+input.number {
   font-size: inherit;
   text-align: center;
-  width: 5em;
-  height: 5em;
-  margin: 3px 0 0 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
   padding: 0;
+  border: none;
 }
 
-input:disabled {
+/* Increase font size on larger screens, to fill up more of the box */
+
+@media screen and (min-width: 400px) and (max-width: 512px) {
+  input.number {
+    font-size: 24px;
+  }
+}
+@media screen and (min-width: 512px) and (max-width: 768px) {
+  input.number {
+    font-size: 34px;
+  }
+}
+@media screen and (min-width: 768px) {
+  input.number {
+    font-size: 44px;
+  }
+}
+
+input.number:disabled {
   font-weight: bold;
   color: black;
 }
@@ -20,3 +39,53 @@ input:disabled {
 input.highlight {
   background: yellow;
 }
+
+/* Regular 1px borders on all cells */
+
+table.table_sudoku {
+  border-collapse: collapse;
+}
+
+td.sudoku_cell {
+  border: 1px solid black;
+  padding: 0px;
+}
+
+/* Thicker borders for the 3x3 subgrids */
+
+tr.sudoku_row:nth-child(1) {
+  border-top: 3px solid black;
+}
+
+tr.sudoku_row:nth-child(3n) {
+  border-bottom: 3px solid black;
+}
+
+td.sudoku_cell:nth-child(1) {
+  border-left: 3px solid black;
+}
+td.sudoku_cell:nth-child(3n) {
+  border-right: 3px solid black;
+}
+
+/* Force cells to be square.  */
+
+td {
+  width: 11.111%;
+  position: relative;
+}
+
+td:after {
+  content: '';
+  display: block;
+  margin-top: 100%;
+}
+
+td .content {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
